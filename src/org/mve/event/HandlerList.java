@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
 public class HandlerList
 {
@@ -19,6 +18,7 @@ public class HandlerList
 	 */
 	private volatile RegisteredListener[] handlers = null;
 	private Class<? extends Event> lastEvent;
+	private final HashMap<Class<? extends Event>, RegisteredListener[]> handlerMap = new HashMap<>();
 
 	/**
 	 * Dynamic handler lists. These are changed using register() and
@@ -71,6 +71,7 @@ public class HandlerList
 		if (check && listeners.contains(listener)) throw new IllegalStateException("This listener is already registered to priority " + listener.getPriority().toString());
 		listeners.add(listener);
 		handlers = null;
+		handlerMap.clear();
 	}
 
 	public void registerAll(Class<? extends Event> clazz, Collection<RegisteredListener> listeners)
@@ -99,7 +100,7 @@ public class HandlerList
 		{
 			List<RegisteredListener> listeners = listenerMap.get(listener.getPriority());
 			if (listeners == null) throw new IllegalArgumentException("Listener has not been registered");
-			if (listeners.remove(listener)) handlers = null;
+			if (listeners.remove(listener)) handlers = null; handlerMap.clear();
 		}
 	}
 
@@ -127,7 +128,7 @@ public class HandlerList
 				}
 			}
 		}
-		if (changed) handlers = null;
+		if (changed) handlers = null; handlerMap.clear();
 	}
 
 	/**
@@ -136,6 +137,8 @@ public class HandlerList
 	public synchronized void bake(Class<? extends Event> clazz)
 	{
 		if (clazz == lastEvent && handlers != null) return;
+		handlers = handlerMap.get(clazz);
+		if (handlers != null) return;
 		List<RegisteredListener> listeners = new LinkedList<>();
 		for (Map.Entry<Class<? extends Event>, Map<EventPriority, List<RegisteredListener>>> entry : handlerslots.entrySet())
 		{
@@ -152,6 +155,9 @@ public class HandlerList
 		int i = 0;
 		for (RegisteredListener listener : listeners) handlers[i++] = listener;
 		lastEvent = clazz;
+		RegisteredListener[] inMap = new RegisteredListener[handlers.length];
+		System.arraycopy(handlers, 0, inMap, 0, handlers.length);
+		handlerMap.put(clazz, inMap);
 	}
 
 	/**
