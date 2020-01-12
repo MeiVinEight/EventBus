@@ -134,11 +134,11 @@ public class HandlerList
 	/**
 	 * Bake HashMap and ArrayLists to 2d array - does nothing if not necessary
 	 */
-	public synchronized void bake(Class<? extends Event> clazz)
+	public synchronized RegisteredListener[] getRegisteredListeners(Class<? extends Event> clazz)
 	{
-		if (clazz == lastEvent && handlers != null) return;
+		if (clazz == lastEvent && handlers != null) return handlers;
 		handlers = handlerMap.get(clazz);
-		if (handlers != null) return;
+		if (handlers != null) return handlers;
 		List<RegisteredListener> listeners = new LinkedList<>();
 		for (Map.Entry<Class<? extends Event>, Map<EventPriority, List<RegisteredListener>>> entry : handlerslots.entrySet())
 		{
@@ -158,18 +158,6 @@ public class HandlerList
 		RegisteredListener[] inMap = new RegisteredListener[handlers.length];
 		System.arraycopy(handlers, 0, inMap, 0, handlers.length);
 		handlerMap.put(clazz, inMap);
-	}
-
-	/**
-	 * Get the baked registered listeners associated with this handler list
-	 *
-	 * @return the array of registered listeners
-	 */
-	public RegisteredListener[] getRegisteredListeners(Class<? extends Event> clazz)
-	{
-		RegisteredListener[] handlers;
-		while ((handlers = this.handlers) == null) bake(clazz); // This prevents fringe cases of returning null
 		return handlers;
 	}
 }
-
