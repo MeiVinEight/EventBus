@@ -1,8 +1,5 @@
 package org.mve.event;
 
-import org.mve.event.core.EventExecutor;
-import org.mve.event.core.SimpleEventExecutorReflect;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,7 +26,7 @@ public class EventExecutorFactory
 		}
 	}
 
-	public static EventExecutor create(Listener listener, Method method)
+	public static EventExecutor create(Listener listener, Method method) throws IllegalAccessException
 	{
 		if (define != null)
 		{
@@ -124,7 +121,7 @@ public class EventExecutorFactory
 				e.printStackTrace();
 			}
 		}
-		return new SimpleEventExecutorReflect(method.getParameterTypes()[0].asSubclass(Event.class), method);
+		return new SimpleReflectionEventExecutor(method.getParameterTypes()[0].asSubclass(Event.class), method);
 	}
 
 	private static byte[] byteArray16(short num)

@@ -1,21 +1,19 @@
-package org.mve.event.core;
+package org.mve.event;
 
-import org.mve.event.Event;
-import org.mve.event.EventException;
-import org.mve.event.Listener;
-
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SimpleEventExecutorReflect implements EventExecutor
+public class SimpleReflectionEventExecutor implements EventExecutor
 {
 	private final Class<? extends Event> eventClass;
-	private final Method method;
+	private final MethodHandle method;
 
-	public SimpleEventExecutorReflect(Class<? extends Event> eventClass, Method method)
+	public SimpleReflectionEventExecutor(Class<? extends Event> eventClass, Method method) throws IllegalAccessException
 	{
 		this.eventClass = eventClass;
-		this.method = method;
+		this.method = MethodHandles.lookup().unreflect(method);
 	}
 
 	@Override

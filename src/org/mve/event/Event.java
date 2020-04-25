@@ -1,7 +1,5 @@
 package org.mve.event;
 
-import org.mve.event.core.EventManager;
-
 /**
  * Represents an event.
  *

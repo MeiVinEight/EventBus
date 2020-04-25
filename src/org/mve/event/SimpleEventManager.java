@@ -1,11 +1,4 @@
-package org.mve.event.core;
-
-import org.mve.event.Event;
-import org.mve.event.EventException;
-import org.mve.event.EventExecutorFactory;
-import org.mve.event.EventHandler;
-import org.mve.event.HandlerList;
-import org.mve.event.Listener;
+package org.mve.event;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,7 +10,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SimpleEventManager implements EventManager
+public final class SimpleEventManager implements EventManager
 {
 	private final Logger logger;
 	private final HandlerList handlers = new HandlerList();
@@ -106,7 +99,16 @@ public class SimpleEventManager implements EventManager
 			Set<RegisteredListener> eventSet = ret.computeIfAbsent(eventClass, k -> new HashSet<>());
 			method.setAccessible(true);
 
-			EventExecutor eventExecutor = EventExecutorFactory.create(listener, method);
+			EventExecutor eventExecutor;
+			try
+			{
+				eventExecutor = EventExecutorFactory.create(listener, method);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				eventExecutor = null;
+			}
 			eventSet.add(new RegisteredListener(listener, eventExecutor, eh.priority(), eh.ignoreCancelled()));
 		}
 		return ret;

@@ -1,10 +1,4 @@
-package org.mve.event.core;
-
-import org.mve.event.Cancellable;
-import org.mve.event.EventException;
-import org.mve.event.EventPriority;
-import org.mve.event.Event;
-import org.mve.event.Listener;
+package org.mve.event;
 
 /**
  * Stores relevant information for plugin listeners

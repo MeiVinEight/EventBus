@@ -1,7 +1,5 @@
 package org.mve.event;
 
-import org.mve.event.core.RegisteredListener;
-
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;

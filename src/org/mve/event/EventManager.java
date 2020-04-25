@@ -1,7 +1,4 @@
-package org.mve.event.core;
-
-import org.mve.event.Event;
-import org.mve.event.Listener;
+package org.mve.event;
 
 public interface EventManager
 {
